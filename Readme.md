@@ -193,6 +193,43 @@ int predicted_class = classify(&test.samples[0], &train, train.num_samples, k);
 make help
 ```
 
+## 📊 Detailed Performance Metrics
+
+### ⏱️ Inference Time
+
+- Average time per inference (`k = 15`): **0.286 ms**
+- Measurement done with `clock()` directly over the `classify()` function
+- Executed 1000 times with the same sample (`test.samples[0]`)
+- No I/O or normalization steps included
+
+### ⚡ Energy Estimation
+
+- Formula: `E = V × I × t`
+- Voltage: 3.3 V
+- Estimated current: 80 mA (0.08 A)
+- Average energy per inference: **~0.000075 J**
+
+---
+
+### 📦 Memory Usage
+
+| Memory Type                  | Value                         | Measurement Method                                   |
+|------------------------------|-------------------------------|------------------------------------------------------|
+| **Code memory (.text)**      | `10,480 bytes` (~10.2 KB)     | Via `size bin/time.exe`                              |
+| **Global memory (.bss + .data)** | `2,388 bytes` (~2.3 KB)       | Via `size bin/time.exe`                              |
+| **Local memory (stack)**     | ~`90.1 KB`                    | Manual estimation (see Stack Breakdown table below) |
+| **Total estimated RAM**      | ~`92.4 KB`                    | Sum of global RAM + stack                            |
+
+#### 📐 Stack Breakdown
+
+| Component                  | Estimated Size         |
+|----------------------------|--------------------------|
+| `Dataset` (1500 samples × 52 B) | ~78,000 bytes (~78 KB)    |
+| `Neighbor neighbors[1500]`      | ~12,000 bytes (~12 KB)    |
+| `mean[12]` + `std[12]`          | 96 bytes                  |
+| **Total estimated stack**     | **~90.1 KB**              |
+
+
 ## 📚 Academic Context
 
 This project implements the KNN classifier described in the research paper about ultrasonic signal classification for electrical insulator condition monitoring. The C implementation provides:

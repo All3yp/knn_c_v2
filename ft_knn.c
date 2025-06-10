@@ -171,19 +171,35 @@ float euclidean_distance(const Sample *a, const Sample *b) {
 int classify(const Sample *input, const Dataset *train, int train_size, int k) {
     Neighbor neighbors[MAX_SAMPLES];
 
-    // Calcula a distância da amostra de entrada para cada amostra de treino
+    // Calcula todas as distâncias
     for (int i = 0; i < train_size; i++) {
         neighbors[i].distance = euclidean_distance(input, &train->samples[i]);
         neighbors[i].class = train->samples[i].class;
     }
 
-    qsort(neighbors, train_size, sizeof(Neighbor), compare_neighbors);
+    // Selection sort parcial: ordenar só os K menores na otimizacao
+    for (int i = 0; i < k; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < train_size; j++) {
+            if (neighbors[j].distance < neighbors[min_idx].distance) {
+                min_idx = j;
+            }
+        }
+        // Troca
+        if (min_idx != i) {
+            Neighbor temp = neighbors[i];
+            neighbors[i] = neighbors[min_idx];
+            neighbors[min_idx] = temp;
+        }
+    }
 
+    // Votação das K classes mais próximas
     int class_votes[NUM_CLASSES] = {0};
     for (int i = 0; i < k; i++) {
         class_votes[neighbors[i].class]++;
     }
 
+    // Retorna a classe com mais votos
     int max_votes = 0;
     int predicted_class = -1;
     for (int i = 0; i < NUM_CLASSES; i++) {
