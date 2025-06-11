@@ -11,10 +11,10 @@ TARGET = $(BIN_DIR)/knn$(EXT)
 all: $(OBJ_DIR) $(BIN_DIR) $(TARGET)
 
 $(OBJ_DIR):
-	@if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)
+	@cmd /c "if not exist $(OBJ_DIR) mkdir $(OBJ_DIR)"
 
 $(BIN_DIR):
-	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+	@cmd /c "if not exist $(BIN_DIR) mkdir $(BIN_DIR)"
 
 $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -33,7 +33,10 @@ time: $(BIN_DIR)/time$(EXT)
 esp: $(BIN_DIR)/main_esp$(EXT)
 
 clean:
-	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/*.exe *.exe *.elf $(OBJ_DIR)/nul nul
+	@cmd /c "if exist $(OBJ_DIR)\*.o del /Q $(OBJ_DIR)\*.o >nul 2>&1"
+	@cmd /c "if exist $(BIN_DIR)\*.exe del /Q $(BIN_DIR)\*.exe >nul 2>&1"
+	@cmd /c "if exist *.exe del /Q *.exe >nul 2>&1"
+	@cmd /c "if exist *.elf del /Q *.elf >nul 2>&1"
 
 re: clean all
 

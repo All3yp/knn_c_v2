@@ -23,10 +23,25 @@ int main() {
     apply_normalization(&train, mean, std);
     apply_normalization(&test, mean, std); 
     printf("\nDados divididos: %d treino, %d teste\n", train.num_samples, test.num_samples);
-    
+
+    printf("\n=== Classificando amostras de teste individualmente ===\n");
+    int acertos = 0;
+    for (int i = 0; i < test.num_samples; i++) {
+        int predita = classify(&test.samples[i], &train, train.num_samples, 15);
+        int real = test.samples[i].class;
+
+        printf("Amostra %d: Classe real = %d | Classe predita = %d %s\n",
+            i, real, predita, (real == predita ? "(OK)" : "(ERRO)"));
+
+        if (real == predita) acertos++;
+    }
+
+    float acc = (float)acertos / test.num_samples * 100.0f;
+    printf("Acuracia final com K=15: %.2f%%\n", acc);
+
     // int k_values[] = {1, 3, 5, 7, 9, 11, 13, 15};
     // int num_k_values = sizeof(k_values) / sizeof(int);
-    // MARK: - Só pra debug, mostra os valores do k
+    // // MARK: - Só pra debug, mostra os valores do k
     // debug_test_multiple_k(&train, &test, k_values, num_k_values);
 
     return 0;
